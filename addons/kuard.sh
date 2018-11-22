@@ -11,6 +11,9 @@ metadata:
 spec:
   replicas: 2
   template:
+    metadata:
+      labels:
+        app: kuard
     spec:
       containers:
       - name: kuard
