@@ -1,33 +1,33 @@
 #!/bin/bash 
 kubecfg="--kubeconfig $1"
 
-cat <<EOF > kuard.yaml
+cat <<EOF > echoserver.yaml
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: kuard
+  name: echoserver
   labels:
-    app: kuard
+    app: echoserver
 spec:
-  replicas: 4
+  replicas: 2
   template:
     metadata:
       labels:
-        app: kuard
+        app: echoserver
     spec:
       containers:
-      - name: kuard
-        image: gcr.io/kuar-demo/kuard-amd64:1
+      - name: echoserver
+        image: gcr.io/google_containers/echoserver:1.4
         ports:
         - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kuard
+  name: echoserver
 spec:
   selector:
-    app: kuard
+    app: echoserver
   ports:
   - protocol: TCP
     port: 80
@@ -36,26 +36,27 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: kuard
+  name: echoserver
   labels:
-    app: kuard
+    app: echoserver
   annotations:
     kubernetes.io/tls-acme: "true"
     certmanager.k8s.io/cluster-issuer: "letsencrypt-staging"
     ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   tls:
-  - secretName: kuard
+  - secretName: echoserver
     hosts:
-    - kuard.kgorcz.net
+    - echo.kgorcz.net
   rules:
-  - host: kuard.kgorcz.net
+  - host: echo.kgorcz.net
     http:
       paths:
       - path: /
         backend:
-          serviceName: kuard
+          serviceName: echoserver
           servicePort: 80
 EOF
 
-kubectl $kubecfg apply -f kuard.yaml
+kubectl $kubecfg apply -f echoserver.yaml
+
