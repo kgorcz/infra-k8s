@@ -1,0 +1,9 @@
+ssh -i ~/.ssh/id_rsa_aws ubuntu@master_ip
+
+sed -i -e 's/^/     /' <file>
+
+https://www.terraform.io/docs/providers/template/d/cloudinit_config.html
+https://cloudinit.readthedocs.io/en/latest/topics/format.html#mime-multi-part-archive
+https://cloudinit.readthedocs.io/en/latest/topics/examples.html#configure-instances-ssh-keys
+
+
