@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Run a background script which waits for the worker nodes to join then installs addons
-kubecfg="/home/ubuntu/.kube/config"
+kubecfg="/home/admin/.kube/config"
 num_nodes=3
-work_dir="/home/ubuntu"
+work_dir="/home/admin"
 
 cat <<EOF > install-addons.sh
 #!/bin/bash
@@ -17,6 +17,7 @@ done
 pushd $work_dir
 git clone https://github.com/kgorcz/infra-k8s
 cd infra-k8s
+git checkout debian
 cd addons
 
 export EMAIL="${letsencrypt_email}"

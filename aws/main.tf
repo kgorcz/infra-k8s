@@ -31,7 +31,7 @@ data "template_cloudinit_config" "master_cloud_init" {
 }
 
 resource "aws_instance" "master_node" {
-    ami = "ami-087868e91f1a665d1"
+    ami = "ami-05829248ffee66250"
     instance_type = "t2.micro"
     subnet_id = "${aws_subnet.public_subnet.id}"
     vpc_security_group_ids = ["${aws_security_group.asg_public.id}"]
@@ -73,7 +73,7 @@ data "template_cloudinit_config" "worker_cloud_init" {
 }
 
 resource "aws_instance" "worker_node" {
-    ami = "ami-087868e91f1a665d1"
+    ami = "ami-05829248ffee66250"
     instance_type = "t2.micro"
     subnet_id = "${aws_subnet.private_subnet.id}"
     vpc_security_group_ids = ["${aws_security_group.asg_private.id}"]
@@ -149,10 +149,10 @@ resource "aws_security_group_rule" "ingress_private_from_private" {
     security_group_id = "${aws_security_group.asg_private.id}"
 }
 
-resource "aws_security_group_rule" "ingress_private_nlb" {
+resource "aws_security_group_rule" "ingress_private_to_nodeport" {
     type = "ingress"
     from_port = 32323
-    to_port = 32324
+    to_port = 32325
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
     security_group_id = "${aws_security_group.asg_private.id}"
@@ -227,8 +227,6 @@ resource "aws_route_table_association" "private" {
   route_table_id = "${aws_route_table.route_private.id}"
 }
 
-
-
 resource "aws_lb" "nlb" {
   name               = "ter-nlb"
   internal           = false
@@ -261,7 +259,7 @@ resource "aws_lb_listener" "https_listener" {
 
 resource "aws_lb_target_group" "http_target" {
   name     = "ter-http-target"
-  port     = 80
+  port     = 32323
   protocol = "TCP"
   vpc_id   = "${aws_vpc.main.id}"
 }
@@ -269,13 +267,12 @@ resource "aws_lb_target_group" "http_target" {
 resource "aws_lb_target_group_attachment" "nlb_attachment_http" {
   target_group_arn = "${aws_lb_target_group.http_target.arn}"
   target_id        =  "${element(aws_instance.worker_node.*.id, count.index)}"
-  port             = 32323
   count = 2
 }
 
 resource "aws_lb_target_group" "https_target" {
   name     = "ter-https-target"
-  port     = 443
+  port     = 32324
   protocol = "TCP"
   vpc_id   = "${aws_vpc.main.id}"
 }
@@ -283,7 +280,6 @@ resource "aws_lb_target_group" "https_target" {
 resource "aws_lb_target_group_attachment" "nlb_attachment_https" {
   target_group_arn = "${aws_lb_target_group.https_target.arn}"
   target_id        =  "${element(aws_instance.worker_node.*.id, count.index)}"
-  port             = 32324
   count = 2
 }
 
@@ -306,6 +302,10 @@ resource "aws_route53_record" "www" {
 
 output "master_ip" {
     value = "${aws_instance.master_node.public_ip}"
+}
+
+output "worker_ip" {
+    value = "${aws_instance.worker_node.0.private_ip}"
 }
 
 output "load_balancer" {
