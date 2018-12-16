@@ -73,7 +73,7 @@ metadata:
 spec:
   containers:
   - name: dicom-server
-    image: quay.io/kgorcz/dcmsvr:1
+    image: quay.io/kgorcz/dcmsvr:2
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 104
