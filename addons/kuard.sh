@@ -9,7 +9,7 @@ metadata:
   labels:
     app: kuard
 spec:
-  replicas: 4
+  replicas: 2
   template:
     metadata:
       labels:

@@ -64,19 +64,26 @@ done
 kubectl $kubecfg delete ing dicom-cert
 
 cat <<EOF > dicom-server.yaml
-apiVersion: v1
-kind: Pod
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
   name: dicom-server
   labels:
     app: dicom-server
 spec:
-  containers:
-  - name: dicom-server
-    image: quay.io/kgorcz/dcmsvr:2
-    imagePullPolicy: IfNotPresent
-    ports:
-    - containerPort: 104
+  replicas: 3
+  template:
+    metadata:
+      name: dicom-server
+      labels:
+        app: dicom-server
+    spec:
+      containers:
+      - name: dicom-server
+        image: quay.io/kgorcz/dcmsvr:2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 104
 ---
 apiVersion: v1
 kind: Service
