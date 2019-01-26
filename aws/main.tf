@@ -80,7 +80,7 @@ resource "aws_instance" "worker_node" {
     key_name = "${aws_key_pair.client.key_name}"
     user_data = "${data.template_cloudinit_config.worker_cloud_init.rendered}"
 
-    count = 2
+    count = 3
 
     tags {
         Name = "tkub-worker-${count.index}"
