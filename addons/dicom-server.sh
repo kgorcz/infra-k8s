@@ -80,10 +80,23 @@ spec:
     spec:
       containers:
       - name: dicom-server
-        image: quay.io/kgorcz/dcmsvr:2
+        image: quay.io/kgorcz/dcmsvr:3
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 104
+        env:
+        - name: AWS_HOST
+          value: "rook-ceph-rgw-my-store.rook-ceph"
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: rook-ceph-object-user-my-store-my-user
+              key: AccessKey
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: rook-ceph-object-user-my-store-my-user
+              key: SecretKey
 ---
 apiVersion: v1
 kind: Service
