@@ -6,4 +6,11 @@ https://www.terraform.io/docs/providers/template/d/cloudinit_config.html
 https://cloudinit.readthedocs.io/en/latest/topics/format.html#mime-multi-part-archive
 https://cloudinit.readthedocs.io/en/latest/topics/examples.html#configure-instances-ssh-keys
 
+wait for ceph rgw pod before creating user
+
+error from lb conn:
+#<Thread:0x00007f7fa4f0fa48@/app/ruby-dicom/lib/dicom/d_server.rb:188 run>
+terminated with exception (report_on_exception is true):
+/app/ruby-dicom/lib/dicom/d_server.rb:198:in `block (2 levels) in start_scp':
+undefined method `[]' for nil:NilClass (NoMethodError)
 
