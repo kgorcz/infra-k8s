@@ -27,6 +27,6 @@ done
 # Copy the object store user secret into the default namespace
 akey=$(kubectl $kubecfg -n rook-ceph get secret rook-ceph-object-user-my-store-my-user -o yaml | grep AccessKey | awk '{print $2}' | base64 --decode)
 skey=$(kubectl $kubecfg -n rook-ceph get secret rook-ceph-object-user-my-store-my-user -o yaml | grep SecretKey | awk '{print $2}' | base64 --decode)
-kubectl create secret generic rook-ceph-object-user-my-store-my-user --from-literal=AccessKey=${akey} --from-literal=SecretKey=${skey}
+kubectl $kubecfg create secret generic rook-ceph-object-user-my-store-my-user --from-literal=AccessKey=${akey} --from-literal=SecretKey=${skey}
 
 popd
