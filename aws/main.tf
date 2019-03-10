@@ -278,7 +278,7 @@ resource "aws_lb_target_group" "http_target" {
 resource "aws_lb_target_group_attachment" "nlb_attachment_http" {
   target_group_arn = "${aws_lb_target_group.http_target.arn}"
   target_id        =  "${element(aws_instance.worker_node.*.id, count.index)}"
-  count = 2
+  count = 3
 }
 
 resource "aws_lb_target_group" "https_target" {
