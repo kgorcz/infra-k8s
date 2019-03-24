@@ -32,7 +32,7 @@ data "template_cloudinit_config" "master_cloud_init" {
 
 resource "aws_instance" "master_node" {
     ami = "ami-05829248ffee66250"
-    instance_type = "t2.micro"
+    instance_type = "t2.small"
     subnet_id = "${aws_subnet.public_subnet.id}"
     vpc_security_group_ids = ["${aws_security_group.asg_public.id}"]
     key_name = "${aws_key_pair.client.key_name}"
@@ -80,7 +80,7 @@ resource "aws_instance" "worker_node" {
     key_name = "${aws_key_pair.client.key_name}"
     user_data = "${data.template_cloudinit_config.worker_cloud_init.rendered}"
 
-    count = 3
+    count = "${var.worker_count}"
 
     tags {
         Name = "tkub-worker-${count.index}"
@@ -278,7 +278,7 @@ resource "aws_lb_target_group" "http_target" {
 resource "aws_lb_target_group_attachment" "nlb_attachment_http" {
   target_group_arn = "${aws_lb_target_group.http_target.arn}"
   target_id        =  "${element(aws_instance.worker_node.*.id, count.index)}"
-  count = 3
+  count = "${var.worker_count}"
 }
 
 resource "aws_lb_target_group" "https_target" {
@@ -291,7 +291,7 @@ resource "aws_lb_target_group" "https_target" {
 resource "aws_lb_target_group_attachment" "nlb_attachment_https" {
   target_group_arn = "${aws_lb_target_group.https_target.arn}"
   target_id        =  "${element(aws_instance.worker_node.*.id, count.index)}"
-  count = 3
+  count = "${var.worker_count}"
 }
 
 resource "aws_lb_target_group" "dicom_target" {
@@ -304,7 +304,7 @@ resource "aws_lb_target_group" "dicom_target" {
 resource "aws_lb_target_group_attachment" "nlb_attachment_dicom" {
   target_group_arn = "${aws_lb_target_group.dicom_target.arn}"
   target_id        =  "${element(aws_instance.worker_node.*.id, count.index)}"
-  count = 3
+  count = "${var.worker_count}"
 }
 
 data "aws_route53_zone" "primary" {
