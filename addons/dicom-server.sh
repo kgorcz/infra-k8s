@@ -129,3 +129,140 @@ spec:
 EOF
 
 kubectl $kubecfg apply -f dicom-server.yaml
+
+cat <<EOF > web-api.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: web-api
+  labels:
+    app: web-api
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: web-api
+    spec:
+      containers:
+      - name: web-api
+        image: quay.io/kgorcz/web-api:1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: AWS_HOST
+          value: "rook-ceph-rgw-my-store.rook-ceph"
+        - name: AWS_ENDPOINT
+          value: "rook-ceph-rgw-my-store.rook-ceph:80"
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: rook-ceph-object-user-my-store-my-user
+              key: AccessKey
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: rook-ceph-object-user-my-store-my-user
+              key: SecretKey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-api
+spec:
+  selector:
+    app: web-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: web-api
+  labels:
+    app: web-api
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-staging"
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  tls:
+  - secretName: web-api
+    hosts:
+    - api.kgorcz.net
+  rules:
+  - host: api.kgorcz.net
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: web-api
+          servicePort: 80
+EOF
+
+kubectl $kubecfg apply -f web-api.yaml
+
+
+cat <<EOF > www.yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: www
+  labels:
+    app: www
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: www
+    spec:
+      containers:
+      - name: www
+        image: quay.io/kgorcz/frontend:1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: APIURL
+          value: "https://api.kgorcz.net/api"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: www
+spec:
+  selector:
+    app: www
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: www
+  labels:
+    app: www
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-staging"
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  tls:
+  - secretName: www
+    hosts:
+    - www.kgorcz.net
+  rules:
+  - host: www.kgorcz.net
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: www
+          servicePort: 80
+EOF
+
+kubectl $kubecfg apply -f www.yaml
