@@ -2,7 +2,7 @@
 
 # Run a background script which waits for the worker nodes to join then installs addons
 kubecfg="/home/admin/.kube/config"
-num_nodes=3
+num_nodes=6
 work_dir="/home/admin"
 
 cat <<EOF > install-addons.sh
