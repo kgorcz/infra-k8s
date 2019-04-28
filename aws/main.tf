@@ -32,7 +32,7 @@ data "template_cloudinit_config" "master_cloud_init" {
 
 resource "aws_instance" "master_node" {
     ami = "ami-00c5940f2b52c5d98"
-    instance_type = "t2.small"
+    instance_type = "t2.medium"
     subnet_id = "${aws_subnet.public_subnet.id}"
     vpc_security_group_ids = ["${aws_security_group.asg_public.id}"]
     key_name = "${aws_key_pair.client.key_name}"
