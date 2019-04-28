@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-KUBERNETES_VERSION=1.11.4-00
-DOCKER_VERSION=17.12.1~ce-0~debian
-CNI_VERSION=0.6.0-00
+KUBERNETES_VERSION=1.13.5-00
+DOCKER_VERSION=18.06.3~ce~3-0~debian
+CNI_VERSION=0.7.5-00
 
 # Add master to list of authorized_keys
 scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /etc/ssh/ssh_host_rsa_key admin@${master_ip}:/etc/ssh/ssh_host_rsa_key.pub ./master_rsa.pub
