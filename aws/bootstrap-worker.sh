@@ -2,6 +2,7 @@
 
 KUBERNETES_VERSION=1.11.4-00
 DOCKER_VERSION=17.12.1~ce-0~debian
+CNI_VERSION=0.6.0-00
 
 # Add master to list of authorized_keys
 scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /etc/ssh/ssh_host_rsa_key admin@${master_ip}:/etc/ssh/ssh_host_rsa_key.pub ./master_rsa.pub
@@ -26,7 +27,7 @@ curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
 apt-get update
 apt-get install -y docker-ce=$DOCKER_VERSION
-apt-get install -y kubelet=$KUBERNETES_VERSION kubeadm=$KUBERNETES_VERSION kubectl=$KUBERNETES_VERSION
+apt-get install -y kubelet=$KUBERNETES_VERSION kubeadm=$KUBERNETES_VERSION kubectl=$KUBERNETES_VERSION kubernetes-cni=$CNI_VERSION
 
 systemctl enable docker
 
