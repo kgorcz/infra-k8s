@@ -2,18 +2,33 @@ provider "aws" {
     region = "us-east-2"
 }
 
+resource "aws_instance" "bastion" {
+    ami = "ami-00c5940f2b52c5d98"
+    instance_type = "t2.micro"
+    subnet_id = "${aws_subnet.public_subnet.id}"
+    vpc_security_group_ids = ["${aws_security_group.asg_public.id}"]
+    key_name = "${aws_key_pair.client.key_name}"
+
+    tags {
+        Name = "bastion"
+    }
+
+    depends_on = ["aws_route_table_association.public"]
+}
+
+
 data "template_file" "master_cloud_config" {
     template = "${file("master.yml")}"
     vars {
-        worker_public_key = "${file("id_rsa_worker.pub")}"
+        worker_bootk8s_key = "${file("id_rsa_worker.pub")}"
     }
 }
-data "template_file" "finish_bootstrap" {
-    template = "${file("bootstrap-finish.sh")}"
-    vars {
-        letsencrypt_email = "${var.letsencrypt_email}"
-    }
-}
+# data "template_file" "finish_bootstrap" {
+#     template = "${file("bootstrap-finish.sh")}"
+#     vars {
+#         letsencrypt_email = "${var.letsencrypt_email}"
+#     }
+# }
 
 data "template_cloudinit_config" "master_cloud_init" {
     part {
@@ -24,17 +39,17 @@ data "template_cloudinit_config" "master_cloud_init" {
         content_type = "text/x-shellscript"
         content = "${file("bootstrap-master.sh")}"
     }
-    part {
-        content_type = "text/x-shellscript"
-        content = "${data.template_file.finish_bootstrap.rendered}"
-    }
+    # part {
+    #     content_type = "text/x-shellscript"
+    #     content = "${data.template_file.finish_bootstrap.rendered}"
+    # }
 }
 
 resource "aws_instance" "master_node" {
     ami = "ami-00c5940f2b52c5d98"
     instance_type = "t2.medium"
-    subnet_id = "${aws_subnet.public_subnet.id}"
-    vpc_security_group_ids = ["${aws_security_group.asg_public.id}"]
+    subnet_id = "${aws_subnet.private_subnet.id}"
+    vpc_security_group_ids = ["${aws_security_group.asg_private.id}"]
     key_name = "${aws_key_pair.client.key_name}"
 
     user_data = "${data.template_cloudinit_config.master_cloud_init.rendered}"
@@ -43,14 +58,14 @@ resource "aws_instance" "master_node" {
         Name = "tkub-master"
     }
 
-    depends_on = ["aws_route_table_association.public"]
+    depends_on = ["aws_route_table_association.private"]
 }
 
 data "template_file" "worker_cloud_config" {
     template = "${file("worker.yml")}"
     vars {
-        worker_private_key = "${file("id_rsa_worker")}"
-        worker_public_key = "${file("id_rsa_worker.pub")}"
+        worker_private_key_b64 = "${file("id_rsa_worker.b64")}"
+        worker_public_key_b64 = "${file("id_rsa_worker.pub.b64")}"
     }
 }
 
@@ -324,12 +339,12 @@ resource "aws_route53_record" "www" {
   }
 }
 
-output "master_ip" {
-    value = "${aws_instance.master_node.public_ip}"
+output "bastion_ip" {
+    value = "${aws_instance.bastion.public_ip}"
 }
 
-output "worker_ip" {
-    value = "${aws_instance.worker_node.0.private_ip}"
+output "master_ip" {
+    value = "${aws_instance.master_node.private_ip}"
 }
 
 output "load_balancer" {

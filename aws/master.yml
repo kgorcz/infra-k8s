@@ -1,6 +1,7 @@
 #cloud-config
 
-# add each entry to ~/.ssh/authorized_keys for the configured user or the
-# first user defined in the user definition directive.
-ssh_authorized_keys:
-  - ${worker_public_key}
+users:
+  - default
+  - name: bootk8s
+    ssh_authorized_keys:
+      - ${worker_bootk8s_key}

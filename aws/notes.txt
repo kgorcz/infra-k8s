@@ -2,6 +2,9 @@ ssh -i ~/.ssh/id_rsa_aws ubuntu@master_ip
 
 sed -i -e 's/^/     /' <file>
 
+ssh-keygen ./id_rsa_worker
+cat id_rsa_worker | base64 -w 0 > id_rsa_worker.b64
+
 https://www.terraform.io/docs/providers/template/d/cloudinit_config.html
 https://cloudinit.readthedocs.io/en/latest/topics/format.html#mime-multi-part-archive
 https://cloudinit.readthedocs.io/en/latest/topics/examples.html#configure-instances-ssh-keys
@@ -14,3 +17,44 @@ terminated with exception (report_on_exception is true):
 /app/ruby-dicom/lib/dicom/d_server.rb:198:in `block (2 levels) in start_scp':
 undefined method `[]' for nil:NilClass (NoMethodError)
 
+SSH_KEY=~/.ssh/id_rsa; scp -i $SSH_KEY -o ProxyCommand="ssh -i \"${SSH_KEY}\" admin@18.220.101.160 nc %h %p" authorized_keys admin@10.0.21.207:~/.ssh/authorized_keys
+
+open port 3080 in public sec grp
+install teleport on bastion
+create join command on bastion
+create user on bastion
+install teleport on k8s nodes
+get join command onto k8s nodes
+join k8s nodes to teleport
+
+The invite token: e8bc735e66e5f83088906add1c557016
+This token will expire in 30 minutes
+
+Run this on the new node to join the cluster:
+
+> teleport start \
+   --roles=node \
+   --token=e8bc735e66e5f83088906add1c557016 \
+   --ca-pin=sha256:235fbe2ecf601f5dd76362ef5e6d6ea19f55c430d3ed8fe1c8c39f216b996bee \
+   --auth-server=10.0.4.88:3025
+
+Please note:
+
+  - This invitation token will expire in 30 minutes
+  - 10.0.4.88:3025 must be reachable from the new node
+
+
+
+
+wget https://get.gravitational.com/teleport-v3.2.4-linux-amd64-bin.tar.gz
+tar -xzf teleport-v3.2.4-linux-amd64-bin.tar.gz
+cd teleport/
+sudo ./install
+mkdir -p /var/lib/teleport
+cp examples/systemd/teleport.service /etc/systemd/system
+systemctl daemon-reload
+systemctl enable teleport
+systemctl start teleport
+sudo tctl users add $USER
+sudo tctl nodes add > teleport_add.sh
+cat teleport_add.sh | grep "start\|\-\-" | cut -b 1 --complement > teleport_join.sh

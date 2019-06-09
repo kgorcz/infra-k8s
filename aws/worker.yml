@@ -1,12 +1,13 @@
 #cloud-config
 
-# Send pre-generated ssh private keys to the server
-# If these are present, they will be written to /etc/ssh and
-# new random keys will not be generated
-#  in addition to 'rsa' and 'dsa' as shown below, 'ecdsa' is also supported
-ssh_keys:
-  rsa_private: |
-${worker_private_key}
-
-  rsa_public: ${worker_public_key}
-
+write_files:
+- path: /etc/ssh/id_rsa_bootk8s
+  owner: root:root
+  permissions: '0600'
+  encoding: b64
+  content: ${worker_private_key_b64}
+- path: /etc/ssh/id_rsa_bootk8s.pub
+  owner: root:root
+  permissions: '0644'
+  encoding: b64
+  content: ${worker_public_key_b64}

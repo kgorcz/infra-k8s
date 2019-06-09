@@ -38,7 +38,9 @@ chown admin:admin .kube/config
 kubecfg="/home/admin/.kube/config"
 
 # Copy the join command for the worker nodes to use
-grep "kubeadm join" kubeinit.log > /home/admin/kube_join.sh
+grep "kubeadm join" kubeinit.log > /home/bootk8s/kube_join.sh
+cp /etc/ssh/ssh_host_rsa_key.pub /home/bootk8s/ssh_host_rsa_key.pub
+chown bootk8s:bootk8s /home/bootk8s/*
 
 # Install calico for pod networking
 kubectl --kubeconfig $kubecfg apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/etcd.yaml
