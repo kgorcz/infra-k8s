@@ -2,12 +2,32 @@ provider "aws" {
     region = "us-east-2"
 }
 
+data "template_file" "bastion_cloud_config" {
+    template = "${file("bastion.yml")}"
+    vars {
+        bootport_key = "${file("id_rsa_port.pub")}"
+    }
+}
+
+data "template_cloudinit_config" "bastion_cloud_init" {
+    part {
+        content_type = "text/cloud-config"
+        content = "${data.template_file.bastion_cloud_config.rendered}"
+    }
+    part {
+        content_type = "text/x-shellscript"
+        content = "${file("bootstrap-bastion.sh")}"
+    }
+}
+
 resource "aws_instance" "bastion" {
     ami = "ami-00c5940f2b52c5d98"
     instance_type = "t2.micro"
     subnet_id = "${aws_subnet.public_subnet.id}"
     vpc_security_group_ids = ["${aws_security_group.asg_public.id}"]
     key_name = "${aws_key_pair.client.key_name}"
+
+    user_data = "${data.template_cloudinit_config.bastion_cloud_init.rendered}"
 
     tags {
         Name = "bastion"
@@ -16,11 +36,19 @@ resource "aws_instance" "bastion" {
     depends_on = ["aws_route_table_association.public"]
 }
 
+data "template_file" "join_teleport" {
+    template = "${file("join-teleport.sh")}"
+    vars {
+        bastion_ip = "${aws_instance.bastion.private_ip}"
+    }
+}
 
 data "template_file" "master_cloud_config" {
     template = "${file("master.yml")}"
     vars {
         worker_bootk8s_key = "${file("id_rsa_worker.pub")}"
+        bootport_private_key_b64 = "${file("id_rsa_port.b64")}"
+        bootport_public_key_b64 = "${file("id_rsa_port.pub.b64")}"
     }
 }
 # data "template_file" "finish_bootstrap" {
@@ -38,6 +66,10 @@ data "template_cloudinit_config" "master_cloud_init" {
     part {
         content_type = "text/x-shellscript"
         content = "${file("bootstrap-master.sh")}"
+    }
+    part {
+        content_type = "text/x-shellscript"
+        content = "${data.template_file.join_teleport.rendered}"
     }
     # part {
     #     content_type = "text/x-shellscript"
@@ -118,6 +150,15 @@ resource "aws_security_group_rule" "ssh" {
     type = "ingress"
     from_port = 22
     to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["${var.local_ip}/32"]
+    security_group_id = "${aws_security_group.asg_public.id}"
+}
+
+resource "aws_security_group_rule" "teleport" {
+    type = "ingress"
+    from_port = 3080
+    to_port = 3080
     protocol = "tcp"
     cidr_blocks = ["${var.local_ip}/32"]
     security_group_id = "${aws_security_group.asg_public.id}"

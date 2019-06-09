@@ -1,0 +1,7 @@
+#cloud-config
+
+users:
+  - default
+  - name: bootport
+    ssh_authorized_keys:
+      - ${bootport_key}

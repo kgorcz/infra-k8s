@@ -5,3 +5,15 @@ users:
   - name: bootk8s
     ssh_authorized_keys:
       - ${worker_bootk8s_key}
+
+write_files:
+- path: /etc/ssh/id_rsa_bootport
+  owner: root:root
+  permissions: '0600'
+  encoding: b64
+  content: ${bootport_private_key_b64}
+- path: /etc/ssh/id_rsa_bootport.pub
+  owner: root:root
+  permissions: '0644'
+  encoding: b64
+  content: ${bootport_public_key_b64}
