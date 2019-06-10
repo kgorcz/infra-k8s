@@ -98,6 +98,8 @@ data "template_file" "worker_cloud_config" {
     vars {
         worker_private_key_b64 = "${file("id_rsa_worker.b64")}"
         worker_public_key_b64 = "${file("id_rsa_worker.pub.b64")}"
+        bootport_private_key_b64 = "${file("id_rsa_port.b64")}"
+        bootport_public_key_b64 = "${file("id_rsa_port.pub.b64")}"
     }
 }
 
@@ -116,6 +118,10 @@ data "template_cloudinit_config" "worker_cloud_init" {
     part {
         content_type = "text/x-shellscript"
         content = "${data.template_file.worker_bootstrap.rendered}"
+    }
+    part {
+        content_type = "text/x-shellscript"
+        content = "${data.template_file.join_teleport.rendered}"
     }
 }
 
@@ -155,10 +161,19 @@ resource "aws_security_group_rule" "ssh" {
     security_group_id = "${aws_security_group.asg_public.id}"
 }
 
-resource "aws_security_group_rule" "teleport" {
+resource "aws_security_group_rule" "teleport_web" {
     type = "ingress"
     from_port = 3080
     to_port = 3080
+    protocol = "tcp"
+    cidr_blocks = ["${var.local_ip}/32"]
+    security_group_id = "${aws_security_group.asg_public.id}"
+}
+
+resource "aws_security_group_rule" "teleport_ssh" {
+    type = "ingress"
+    from_port = 3023
+    to_port = 3023
     protocol = "tcp"
     cidr_blocks = ["${var.local_ip}/32"]
     security_group_id = "${aws_security_group.asg_public.id}"
