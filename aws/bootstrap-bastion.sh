@@ -4,7 +4,7 @@ TELEPORT_VERSION=v3.2.4
 
 pushd /home/admin
 
-wget https://get.gravitational.com/teleport-$TELEPORT_VERSION-linux-amd64-bin.tar.gz
+wget -nv https://get.gravitational.com/teleport-$TELEPORT_VERSION-linux-amd64-bin.tar.gz
 tar -xzf teleport-$TELEPORT_VERSION-linux-amd64-bin.tar.gz
 
 pushd teleport/
@@ -24,4 +24,7 @@ cat teleport_add.sh | grep "start\|\-\-" | cut -b 1 --complement > teleport_join
 cp teleport_join.sh /home/bootport/teleport_join.sh
 chown bootport:bootport /home/bootport/*
 
-# sudo tctl users add $USER
+ln -s /home/bootport/teleport.yaml /etc/teleport.yaml
+
+# sudo tctl users add $USER --k8s-groups="system:masters"
+# sudo systemctl restart teleport

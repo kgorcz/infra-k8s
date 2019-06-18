@@ -4,7 +4,7 @@ TELEPORT_VERSION=v3.2.4
 
 pushd /home/admin
 
-wget https://get.gravitational.com/teleport-$TELEPORT_VERSION-linux-amd64-bin.tar.gz
+wget -nv https://get.gravitational.com/teleport-$TELEPORT_VERSION-linux-amd64-bin.tar.gz
 tar -xzf teleport-$TELEPORT_VERSION-linux-amd64-bin.tar.gz
 
 pushd teleport/

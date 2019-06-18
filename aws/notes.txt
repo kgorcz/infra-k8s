@@ -58,3 +58,11 @@ systemctl start teleport
 sudo tctl users add $USER
 sudo tctl nodes add > teleport_add.sh
 cat teleport_add.sh | grep "start\|\-\-" | cut -b 1 --complement > teleport_join.sh
+
+https://gravitational.com/teleport/docs/kubernetes_ssh/
+https://gravitational.com/teleport/docs/admin-guide/#kubernetes-integration
+https://gravitational.com/teleport/docs/admin-guide/#editing-users
+https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate#94861
+https://stackoverflow.com/questions/47770676/how-to-create-a-kubectl-config-file-for-serviceaccount
+open port 3026
+tctl users add joe --k8s-groups="system:masters"

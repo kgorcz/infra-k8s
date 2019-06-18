@@ -43,6 +43,14 @@ data "template_file" "join_teleport" {
     }
 }
 
+data "template_file" "setup_teleport_k8s" {
+    template = "${file("setup-teleport-k8s.sh")}"
+    vars {
+        bastion_private_ip = "${aws_instance.bastion.private_ip}"
+        bastion_public_ip = "${aws_instance.bastion.public_ip}"
+    }
+}
+
 data "template_file" "master_cloud_config" {
     template = "${file("master.yml")}"
     vars {
@@ -70,6 +78,10 @@ data "template_cloudinit_config" "master_cloud_init" {
     part {
         content_type = "text/x-shellscript"
         content = "${data.template_file.join_teleport.rendered}"
+    }
+    part {
+        content_type = "text/x-shellscript"
+        content = "${data.template_file.setup_teleport_k8s.rendered}"
     }
     # part {
     #     content_type = "text/x-shellscript"
@@ -174,6 +186,15 @@ resource "aws_security_group_rule" "teleport_ssh" {
     type = "ingress"
     from_port = 3023
     to_port = 3023
+    protocol = "tcp"
+    cidr_blocks = ["${var.local_ip}/32"]
+    security_group_id = "${aws_security_group.asg_public.id}"
+}
+
+resource "aws_security_group_rule" "teleport_kubernetes" {
+    type = "ingress"
+    from_port = 3026
+    to_port = 3026
     protocol = "tcp"
     cidr_blocks = ["${var.local_ip}/32"]
     security_group_id = "${aws_security_group.asg_public.id}"
