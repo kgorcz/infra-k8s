@@ -65,4 +65,5 @@ https://gravitational.com/teleport/docs/admin-guide/#editing-users
 https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate#94861
 https://stackoverflow.com/questions/47770676/how-to-create-a-kubectl-config-file-for-serviceaccount
 open port 3026
-tctl users add joe --k8s-groups="system:masters"
+sudo tctl users add $USER --k8s-groups="system:masters"
+sudo systemctl restart teleport

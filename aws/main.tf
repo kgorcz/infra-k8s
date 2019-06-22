@@ -59,12 +59,12 @@ data "template_file" "master_cloud_config" {
         bootport_public_key_b64 = "${file("id_rsa_port.pub.b64")}"
     }
 }
-# data "template_file" "finish_bootstrap" {
-#     template = "${file("bootstrap-finish.sh")}"
-#     vars {
-#         letsencrypt_email = "${var.letsencrypt_email}"
-#     }
-# }
+data "template_file" "finish_bootstrap" {
+    template = "${file("bootstrap-finish.sh")}"
+    vars {
+        letsencrypt_email = "${var.letsencrypt_email}"
+    }
+}
 
 data "template_cloudinit_config" "master_cloud_init" {
     part {
@@ -83,10 +83,10 @@ data "template_cloudinit_config" "master_cloud_init" {
         content_type = "text/x-shellscript"
         content = "${data.template_file.setup_teleport_k8s.rendered}"
     }
-    # part {
-    #     content_type = "text/x-shellscript"
-    #     content = "${data.template_file.finish_bootstrap.rendered}"
-    # }
+    part {
+        content_type = "text/x-shellscript"
+        content = "${data.template_file.finish_bootstrap.rendered}"
+    }
 }
 
 resource "aws_instance" "master_node" {
