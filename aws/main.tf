@@ -63,6 +63,7 @@ data "template_file" "finish_bootstrap" {
     template = "${file("bootstrap-finish.sh")}"
     vars {
         letsencrypt_email = "${var.letsencrypt_email}"
+        node_count = "${var.worker_count}"
     }
 }
 
@@ -95,6 +96,9 @@ resource "aws_instance" "master_node" {
     subnet_id = "${aws_subnet.private_subnet.id}"
     vpc_security_group_ids = ["${aws_security_group.asg_private.id}"]
     key_name = "${aws_key_pair.client.key_name}"
+    root_block_device {
+      volume_size = 16
+    }
 
     user_data = "${data.template_cloudinit_config.master_cloud_init.rendered}"
 
@@ -144,6 +148,9 @@ resource "aws_instance" "worker_node" {
     vpc_security_group_ids = ["${aws_security_group.asg_private.id}"]
     key_name = "${aws_key_pair.client.key_name}"
     user_data = "${data.template_cloudinit_config.worker_cloud_init.rendered}"
+    root_block_device {
+      volume_size = 16
+    }
 
     count = "${var.worker_count}"
 
