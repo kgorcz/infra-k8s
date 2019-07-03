@@ -3,6 +3,8 @@ kubecfg="--kubeconfig $1"
 
 wget https://download.elastic.co/downloads/eck/0.8.1/all-in-one.yaml
 
+kubectl $kubecfg apply -f all-in-one.yaml
+
 cat <<EOF > escluster.yaml
 apiVersion: elasticsearch.k8s.elastic.co/v1alpha1
 kind: Elasticsearch
@@ -17,6 +19,8 @@ spec:
       node.data: true
       node.ingest: true
 EOF
+
+while true; do if [ $(kubectl $kubecfg get crd | grep elasticsearches | wc -l) -eq "1" ]; then break; fi; date; sleep 3; done
 
 kubectl $kubecfg apply -f escluster.yaml
 
