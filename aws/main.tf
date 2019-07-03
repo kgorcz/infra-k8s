@@ -143,7 +143,7 @@ data "template_cloudinit_config" "worker_cloud_init" {
 
 resource "aws_instance" "worker_node" {
     ami = "ami-00c5940f2b52c5d98"
-    instance_type = "t2.micro"
+    instance_type = "t2.medium"
     subnet_id = "${aws_subnet.private_subnet.id}"
     vpc_security_group_ids = ["${aws_security_group.asg_private.id}"]
     key_name = "${aws_key_pair.client.key_name}"
