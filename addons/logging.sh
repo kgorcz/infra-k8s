@@ -1,6 +1,7 @@
 #!/bin/bash
 kubecfg="--kubeconfig $1"
 
+# https://www.elastic.co/guide/en/cloud-on-k8s/current/k8s-quickstart.html
 wget https://download.elastic.co/downloads/eck/0.8.1/all-in-one.yaml
 
 kubectl $kubecfg apply -f all-in-one.yaml
