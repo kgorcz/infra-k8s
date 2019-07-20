@@ -67,3 +67,5 @@ https://stackoverflow.com/questions/47770676/how-to-create-a-kubectl-config-file
 open port 3026
 sudo tctl users add $USER --k8s-groups="system:masters"
 sudo systemctl restart teleport
+
+kubectl get secret elasticsearch-logging-elastic-user -o yaml | grep elastic: | awk '{ print $2}' | base64 -d
