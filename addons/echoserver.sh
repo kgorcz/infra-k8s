@@ -47,9 +47,9 @@ spec:
   tls:
   - secretName: echoserver
     hosts:
-    - echo.kgorcz.net
+    - echo.${DOMAIN}
   rules:
-  - host: echo.kgorcz.net
+  - host: echo.${DOMAIN}
     http:
       paths:
       - path: /

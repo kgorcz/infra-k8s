@@ -1,3 +1,7 @@
+variable "cluster_name" {
+  description = "The name to use for all the cluster resources"
+}
+
 variable "bastion_private_ip" {
   description = "description"
 }

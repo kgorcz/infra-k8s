@@ -47,9 +47,9 @@ spec:
   tls:
   - secretName: kuard
     hosts:
-    - kuard.kgorcz.net
+    - kuard.${DOMAIN}
   rules:
-  - host: kuard.kgorcz.net
+  - host: kuard.${DOMAIN}
     http:
       paths:
       - path: /

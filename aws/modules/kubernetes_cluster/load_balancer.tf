@@ -1,5 +1,5 @@
 resource "aws_lb" "nlb" {
-  name               = "ter-nlb"
+  name               = "${var.cluster_name}-nlb"
   internal           = false
   load_balancer_type = "network"
   subnets = ["${var.public_subnet_id}"]

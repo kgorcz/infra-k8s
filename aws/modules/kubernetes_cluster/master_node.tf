@@ -9,6 +9,7 @@ data "template_file" "master_cloud_config" {
 data "template_file" "finish_bootstrap" {
     template = "${file("bootstrap-finish.sh")}"
     vars {
+        domain_name = "${var.domain_name}"
         letsencrypt_email = "${var.letsencrypt_email}"
         node_count = "${var.worker_count}"
     }
@@ -50,7 +51,7 @@ resource "aws_instance" "master_node" {
     user_data = "${data.template_cloudinit_config.master_cloud_init.rendered}"
 
     tags {
-        Name = "tkub-master"
+        Name = "${var.cluster_name}-master"
     }
 }
 

@@ -42,9 +42,9 @@ spec:
  tls:
  - secretName: dicom-cert
    hosts:
-   - dicom.kgorcz.net
+   - dicom.${DOMAIN}
  rules:
- - host: dicom.kgorcz.net
+ - host: dicom.${DOMAIN}
    http:
      paths:
      - path: /
@@ -117,7 +117,7 @@ metadata:
   namespace: default
 spec: 
   virtualhost:
-    fqdn: dicom.kgorcz.net
+    fqdn: dicom.${DOMAIN}
     port: 104
     tls:
       secretName: dicom-cert
@@ -191,9 +191,9 @@ spec:
   tls:
   - secretName: web-api
     hosts:
-    - api.kgorcz.net
+    - api.${DOMAIN}
   rules:
-  - host: api.kgorcz.net
+  - host: api.${DOMAIN}
     http:
       paths:
       - path: /
@@ -226,7 +226,7 @@ spec:
         - containerPort: 3000
         env:
         - name: APIURL
-          value: "https://api.kgorcz.net/api"
+          value: "https://api.${DOMAIN}/api"
 ---
 apiVersion: v1
 kind: Service
@@ -254,9 +254,9 @@ spec:
   tls:
   - secretName: www
     hosts:
-    - www.kgorcz.net
+    - www.${DOMAIN}
   rules:
-  - host: www.kgorcz.net
+  - host: www.${DOMAIN}
     http:
       paths:
       - path: /

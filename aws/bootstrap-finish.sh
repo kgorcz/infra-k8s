@@ -19,9 +19,10 @@ done
 pushd $work_dir
 git clone https://github.com/kgorcz/infra-k8s
 cd infra-k8s
-git checkout debian
+git checkout modules
 cd addons
 
+export DOMAIN="${domain_name}"
 export EMAIL="${letsencrypt_email}"
 
 for i in \$(ls *sh)

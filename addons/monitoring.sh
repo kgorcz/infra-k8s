@@ -26,9 +26,9 @@ spec:
   tls:
   - secretName: grafana
     hosts:
-    - grafana.kgorcz.net
+    - grafana.${DOMAIN}
   rules:
-  - host: grafana.kgorcz.net
+  - host: grafana.${DOMAIN}
     http:
       paths:
       - path: /

@@ -1,5 +1,6 @@
 provider "aws" {
     region = "us-east-2"
+    version = "~> 1.5.0"
 }
 
 resource "aws_key_pair" "client" {
@@ -9,7 +10,6 @@ resource "aws_key_pair" "client" {
 
 module "vpc" {
   source = "./modules/vpc"
-  cluster_name = "k8s"
   availability_zone = "us-east-2b"
 }
 
@@ -23,6 +23,7 @@ module "bastion" {
 
 module "kubernetes_cluster" {
   source = "./modules/kubernetes_cluster"
+  cluster_name = "k8s-a"
   bastion_private_ip = "${module.bastion.private_ip}"
   bastion_public_ip = "${module.bastion.public_ip}"
   bastion_security_group_id = "${module.bastion.security_group_id}"

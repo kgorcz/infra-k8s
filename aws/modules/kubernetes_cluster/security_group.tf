@@ -1,5 +1,5 @@
 resource "aws_security_group" "asg_private" {
-    name = "ter-asg-private"
+    name = "${var.cluster_name}-asg"
     vpc_id = "${var.vpc_id}"
 }
 

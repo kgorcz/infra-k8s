@@ -44,6 +44,6 @@ resource "aws_instance" "worker_node" {
     count = "${var.worker_count}"
 
     tags {
-        Name = "tkub-worker-${count.index}"
+        Name = "${var.cluster_name}-worker-${count.index}"
     }
 }
