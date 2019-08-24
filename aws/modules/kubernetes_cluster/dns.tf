@@ -1,5 +1,5 @@
 data "aws_route53_zone" "primary" {
-  name         = "${var.domain_name}."
+  name         = "${var.root_domain}."
   private_zone = false
 }
 

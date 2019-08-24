@@ -40,7 +40,7 @@ resource "aws_lb_listener" "dicom_listener" {
 }
 
 resource "aws_lb_target_group" "http_target" {
-  name     = "ter-http-target"
+  name     = "${var.cluster_name}-http-target"
   port     = 32323
   protocol = "TCP"
   vpc_id   = "${var.vpc_id}"
@@ -53,7 +53,7 @@ resource "aws_lb_target_group_attachment" "nlb_attachment_http" {
 }
 
 resource "aws_lb_target_group" "https_target" {
-  name     = "ter-https-target"
+  name     = "${var.cluster_name}-https-target"
   port     = 32324
   protocol = "TCP"
   vpc_id   = "${var.vpc_id}"
@@ -67,7 +67,7 @@ resource "aws_lb_target_group_attachment" "nlb_attachment_https" {
 
 
 resource "aws_lb_target_group" "dicom_target" {
-  name     = "ter-dicom-target"
+  name     = "${var.cluster_name}-dicom-target"
   port     = 32325
   protocol = "TCP"
   vpc_id   = "${var.vpc_id}"

@@ -34,6 +34,10 @@ variable "vpc_id" {
   description = "description"
 }
 
+variable "root_domain" {
+  description = "description"
+}
+
 variable "domain_name" {
   description = "description"
 }
