@@ -1,26 +1,50 @@
 #!/bin/bash 
 kubecfg="--kubeconfig $1"
 
-git clone https://github.com/jetstack/cert-manager
-pushd cert-manager
-git checkout -b v03 v0.3.2
-kubectl $kubecfg apply -f contrib/manifests/cert-manager/with-rbac.yaml
-popd
+wget https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
+kubectl $kubecfg apply -f cert-manager.yaml
 
 cat <<EOF > letsencrypt-staging.yaml
-apiVersion: certmanager.k8s.io/v1alpha1
-kind: ClusterIssuer
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
 metadata:
   name: letsencrypt-staging
-  namespace: cert-manager
 spec:
-  acme:
-    email: ${EMAIL}
-    http01: {}
-    privateKeySecretRef:
-      name: letsencrypt-staging
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
+   acme:
+     # The ACME server URL
+     server: https://acme-staging-v02.api.letsencrypt.org/directory
+     # Email address used for ACME registration
+     email: ${EMAIL}
+     # Name of a secret used to store the ACME account private key
+     privateKeySecretRef:
+       name: letsencrypt-staging
+     # Enable the HTTP-01 challenge provider
+     solvers:
+     - http01:
+        ingress:
+          class: contour
 EOF
 
 kubectl $kubecfg apply -f letsencrypt-staging.yaml
+
+cat <<EOF > letsencrypt-prod.yaml
+apiVersion: cert-manager.io/v1alpha2
+kind: Issuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: ${EMAIL}
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    # An empty 'selector' means that this solver matches all domains
+    - http01:
+       ingress:
+         class: contour
+EOF
 
