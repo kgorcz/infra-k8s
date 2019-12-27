@@ -2,7 +2,7 @@
 kubecfg="--kubeconfig $1"
 
 cat <<EOF > kuard.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kuard

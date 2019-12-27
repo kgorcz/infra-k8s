@@ -64,7 +64,7 @@ done
 kubectl $kubecfg delete ing dicom-cert
 
 cat <<EOF > dicom-server.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dicom-server
@@ -131,7 +131,7 @@ EOF
 kubectl $kubecfg apply -f dicom-server.yaml
 
 cat <<EOF > web-api.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-api
@@ -206,7 +206,7 @@ kubectl $kubecfg apply -f web-api.yaml
 
 
 cat <<EOF > www.yaml
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: www
