@@ -26,6 +26,12 @@ spec:
 EOF
 
 kubectl $kubecfg apply -f letsencrypt-staging.yaml
+while [ $? -ne 0 ]
+do
+    sleep 20
+    echo "Retrying lets encrypt staging issuer..."
+    kubectl $kubecfg apply -f letsencrypt-staging.yaml
+done
 
 cat <<EOF > letsencrypt-prod.yaml
 apiVersion: cert-manager.io/v1alpha2

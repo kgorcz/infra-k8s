@@ -6,6 +6,7 @@ cd contour
 git checkout layer-4-ingress
 cd deployment/deployment-grpc-v2
 
+sed "s|extensions/v1beta1|apps/v1|" -i 02-contour.yaml
 sed "s|mycontour:5|quay.io/kgorcz/contour:1|" -i 02-contour.yaml
 sed "s|targetPort: 8080|targetPort: 8080\n   nodePort: 32323|" -i 02-service.yaml
 sed "s|targetPort: 8443|targetPort: 8443\n   nodePort: 32324|" -i 02-service.yaml
