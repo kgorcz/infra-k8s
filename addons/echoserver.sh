@@ -10,6 +10,9 @@ metadata:
     app: echoserver
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: echoserver
   template:
     metadata:
       labels:

@@ -72,6 +72,9 @@ metadata:
     app: dicom-server
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      app: dicom-server
   template:
     metadata:
       name: dicom-server
@@ -139,6 +142,9 @@ metadata:
     app: web-api
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: web-api
   template:
     metadata:
       labels:
@@ -214,6 +220,9 @@ metadata:
     app: www
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: www
   template:
     metadata:
       labels:

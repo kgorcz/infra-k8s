@@ -10,6 +10,9 @@ metadata:
     app: kuard
 spec:
   replicas: 2
+  selector:
+    matchLabels:
+      app: kuard
   template:
     metadata:
       labels:
