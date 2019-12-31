@@ -7,6 +7,11 @@ git checkout -b v106 v1.0.6
 cd cluster/examples/kubernetes/ceph/
 kubectl $kubecfg apply -f common.yaml
 kubectl $kubecfg apply -f operator.yaml
+sed "s|#directories|directories|" -i cluster.yaml
+sed "s|#- path: /var/lib/rook|- path: /var/lib/rook|" -i cluster.yaml
+sed "s|# databaseSizeMB|databaseSizeMB|" -i cluster.yaml
+sed "s|# journalSizeMB|journalSizeMB|" -i cluster.yaml
+sed "s|# osdsPerDevice|osdsPerDevice|" -i cluster.yaml
 kubectl $kubecfg apply -f cluster.yaml
 kubectl $kubecfg apply -f object.yaml
 
