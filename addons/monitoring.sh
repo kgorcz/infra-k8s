@@ -3,11 +3,10 @@ kubecfg="--kubeconfig $1"
 
 git clone https://github.com/coreos/kube-prometheus
 pushd kube-prometheus
-git checkout -b v01 v0.1.0
-kubectl $kubecfg create -f manifests/
-until kubectl $kubecfg get customresourcedefinitions servicemonitors.monitoring.coreos.com ; do date; sleep 1; echo ""; done
+git checkout -b v03 v0.3.0
+kubectl $kubecfg create -f manifests/setup
 until kubectl $kubecfg get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
-kubectl $kubecfg apply -f manifests/
+kubectl $kubecfg create -f manifests/
 popd
 
 cat <<EOF > grafana.yaml
