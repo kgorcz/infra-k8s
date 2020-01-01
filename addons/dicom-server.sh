@@ -124,11 +124,10 @@ spec:
     port: 104
     tls:
       secretName: dicom-cert
-  routes: 
-    - match: /
-      services: 
-      - name: dicom-server
-        port: 104
+  tcpproxy: 
+    services: 
+    - name: dicom-server
+      port: 104
 EOF
 
 kubectl $kubecfg apply -f dicom-server.yaml
