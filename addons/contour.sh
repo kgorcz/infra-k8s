@@ -4,14 +4,15 @@ kubecfg="--kubeconfig $1"
 git clone https://github.com/kgorcz/contour
 cd contour
 git checkout heptio-integ
-cd deployment/deployment-grpc-v2
+cd examples/contour
 
-sed "s|extensions/v1beta1|apps/v1|" -i 02-contour.yaml
-sed "s|gcr.io/heptio-images/contour:v0.8.0|quay.io/kgorcz/contour:v0.8.0|" -i 02-contour.yaml
-sed "s|targetPort: 8080|targetPort: 8080\n   nodePort: 32323|" -i 02-service.yaml
-sed "s|targetPort: 8443|targetPort: 8443\n   nodePort: 32324|" -i 02-service.yaml
-sed "s|targetPort: 104|targetPort: 104\n   nodePort: 32325|" -i 02-service.yaml
-sed "s|type: NodePort|type: NodePort\n externalTrafficPolicy: Local|" -i 02-service.yaml
-sed "s|replicas: 1|replicas: 4|" -i 02-contour.yaml
+sed "s|docker.io/projectcontour/contour:v1.0.1|quay.io/kgorcz/contour:v1.0.1|" -i 03-contour.yaml
+sed "s|port: 80|port: 80\n    nodePort: 32323|" -i 02-service-envoy.yaml
+sed "s|port: 443|port: 443\n    nodePort: 32324|" -i 02-service-envoy.yaml
+sed "s|selector:|- port: 104\n    nodePort: 32325\n    name: dicom\n    protocol: TCP\n  selector:|" -i 02-service-envoy.yaml
+sed "s|LoadBalancer|NodePort|" -i 02-service-envoy.yaml
+cat 03-envoy.yaml | grep -v "hostPort" > 03-envoy-mod.yaml
+rm 03-envoy.yaml
+mv 03-envoy-mod.yaml 03-envoy.yaml
 
 kubectl $kubecfg apply -f .

@@ -61,6 +61,9 @@ do
     sleep 5
 done
 
+kubectl $kubecfg get secret dicom-cert --export -o yaml > secret.yaml
+sed "s|dicom-cert|dicom-cert-tcp|" -i secret.yaml
+kubectl $kubecfg apply -f secret.yaml
 kubectl $kubecfg delete ing dicom-cert
 
 cat <<EOF > dicom-server.yaml
@@ -123,7 +126,7 @@ spec:
     fqdn: dicom.${DOMAIN}
     port: 104
     tls:
-      secretName: dicom-cert
+      secretName: dicom-cert-tcp
   tcpproxy: 
     services: 
     - name: dicom-server
