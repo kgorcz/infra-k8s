@@ -55,7 +55,7 @@ EOF
 
 kubectl $kubecfg apply -f dicom-cert.yaml
 
-while [ $(kubectl $kubecfg get secret dicom-cert | grep dicom-cert | wc -l) -lt 1 ]
+while [ $(kubectl $kubecfg get cert dicom-cert | grep True | wc -l) -lt 1 ]
 do
     echo Waiting for dicom-cert...
     sleep 5
