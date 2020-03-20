@@ -3,7 +3,7 @@ kubecfg="--kubeconfig $1"
 
 git clone https://github.com/kgorcz/contour
 cd contour
-git checkout heptio-integ
+git checkout -b integ101 ebdf96bdf057baf579972d51a1dc638ea3dcefb1
 cd examples/contour
 
 sed "s|docker.io/projectcontour/contour:v1.0.1|quay.io/kgorcz/contour:v1.0.1|" -i 03-contour.yaml
