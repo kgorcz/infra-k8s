@@ -19,7 +19,7 @@ done
 pushd $work_dir
 git clone https://github.com/kgorcz/infra-k8s
 cd infra-k8s
-git checkout modules
+git checkout debian
 cd addons
 
 export DOMAIN="${domain_name}"

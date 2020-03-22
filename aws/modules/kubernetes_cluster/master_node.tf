@@ -39,7 +39,7 @@ data "template_cloudinit_config" "master_cloud_init" {
 }
 
 resource "aws_instance" "master_node" {
-    ami = "ami-00c5940f2b52c5d98"
+    ami = "ami-05d9978d11a05da49"
     instance_type = "t2.medium"
     subnet_id = "${var.private_subnet_id}"
     vpc_security_group_ids = ["${aws_security_group.asg_private.id}"]

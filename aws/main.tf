@@ -41,21 +41,21 @@ module "kubernetes_cluster_a" {
   letsencrypt_email = "${var.letsencrypt_email}"
 }
 
-module "kubernetes_cluster_b" {
-  source = "./modules/kubernetes_cluster"
-  cluster_name = "${var.cluster_names[1]}"
-  bastion_private_ip = "${module.bastion.private_ip}"
-  bastion_public_ip = "${module.bastion.public_ip}"
-  bastion_security_group_id = "${module.bastion.security_group_id}"
-  key_name = "${aws_key_pair.client.key_name}"
-  public_subnet_id = "${module.vpc.public_subnet_id}"
-  private_subnet_id = "${module.vpc.private_subnet_id}"
-  worker_count = "${var.worker_count}"
-  vpc_id = "${module.vpc.vpc_id}"
-  root_domain = "${var.root_domain}"
-  domain_name = "${join(".", list(var.cluster_names[1], var.root_domain))}"
-  letsencrypt_email = "${var.letsencrypt_email}"
-}
+# module "kubernetes_cluster_b" {
+#   source = "./modules/kubernetes_cluster"
+#   cluster_name = "${var.cluster_names[1]}"
+#   bastion_private_ip = "${module.bastion.private_ip}"
+#   bastion_public_ip = "${module.bastion.public_ip}"
+#   bastion_security_group_id = "${module.bastion.security_group_id}"
+#   key_name = "${aws_key_pair.client.key_name}"
+#   public_subnet_id = "${module.vpc.public_subnet_id}"
+#   private_subnet_id = "${module.vpc.private_subnet_id}"
+#   worker_count = "${var.worker_count}"
+#   vpc_id = "${module.vpc.vpc_id}"
+#   root_domain = "${var.root_domain}"
+#   domain_name = "${join(".", list(var.cluster_names[1], var.root_domain))}"
+#   letsencrypt_email = "${var.letsencrypt_email}"
+# }
 
 
 output "bastion_ip" {
@@ -70,11 +70,11 @@ output "load_balancer_a" {
     value = "${module.kubernetes_cluster_a.load_balancer}"
 }
 
-output "master_ip_b" {
-    value = "${module.kubernetes_cluster_b.master_ip}"
-}
+# output "master_ip_b" {
+#     value = "${module.kubernetes_cluster_b.master_ip}"
+# }
 
-output "load_balancer_b" {
-    value = "${module.kubernetes_cluster_b.load_balancer}"
-}
+# output "load_balancer_b" {
+#     value = "${module.kubernetes_cluster_b.load_balancer}"
+# }
 
