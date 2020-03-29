@@ -1,8 +1,8 @@
 
 data "template_file" "bastion_cloud_config" {
-    template = "${file("bastion.yml")}"
+    template = "${file("${path.module}/bastion.yml")}"
     vars {
-        bootport_key = "${file("id_rsa_port.pub")}"
+        bootport_key = "${file("pki/id_rsa_port.pub")}"
     }
 }
 
@@ -13,7 +13,7 @@ data "template_cloudinit_config" "bastion_cloud_init" {
     }
     part {
         content_type = "text/x-shellscript"
-        content = "${file("bootstrap-bastion.sh")}"
+        content = "${file("scripts/bootstrap-bastion.sh")}"
     }
 }
 

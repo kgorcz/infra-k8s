@@ -2,3 +2,4 @@
 *tfstate*
 id_rsa*
 *.tfvars
+pki/*

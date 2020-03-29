@@ -1,15 +1,15 @@
 data "template_file" "worker_cloud_config" {
-    template = "${file("worker.yml")}"
+    template = "${file("${path.module}/worker.yml")}"
     vars {
-        worker_private_key_b64 = "${file("id_rsa_worker.b64")}"
-        worker_public_key_b64 = "${file("id_rsa_worker.pub.b64")}"
-        bootport_private_key_b64 = "${file("id_rsa_port.b64")}"
-        bootport_public_key_b64 = "${file("id_rsa_port.pub.b64")}"
+        worker_private_key_b64 = "${base64encode(file("pki/id_rsa_worker"))}"
+        worker_public_key_b64 = "${base64encode(file("pki/id_rsa_worker.pub"))}"
+        bootport_private_key_b64 = "${base64encode(file("pki/id_rsa_port"))}"
+        bootport_public_key_b64 = "${base64encode(file("pki/id_rsa_port.pub"))}"
     }
 }
 
 data "template_file" "worker_bootstrap" {
-    template = "${file("bootstrap-worker.sh")}"
+    template = "${file("scripts/bootstrap-worker.sh")}"
     vars {
         master_ip = "${aws_instance.master_node.private_ip}"
     }

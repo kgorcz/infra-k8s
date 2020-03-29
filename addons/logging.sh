@@ -56,3 +56,5 @@ sed "s|http|https|" -i fluentd-daemonset-elasticsearch-rbac.yaml
 sed "s|changeme\"|$PASSWORD\"\n          - name: FLUENT_ELASTICSEARCH_SSL_VERIFY\n            value: \"false\"\n          - name: FLUENT_ELASTICSEARCH_SSL_VERSION\n            value: \"TLSv1_2\"|" -i fluentd-daemonset-elasticsearch-rbac.yaml
 
 kubectl $kubecfg apply -f fluentd-daemonset-elasticsearch-rbac.yaml
+
+# kc get secret elasticsearch-logging-elastic-user -o yaml | grep elastic: | awk '{print $2}' | base64 -d

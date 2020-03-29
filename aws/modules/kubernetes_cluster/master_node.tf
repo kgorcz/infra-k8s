@@ -1,13 +1,14 @@
 data "template_file" "master_cloud_config" {
-    template = "${file("master.yml")}"
+    template = "${file("${path.module}/master.yml")}"
     vars {
-        worker_bootk8s_key = "${file("id_rsa_worker.pub")}"
-        bootport_private_key_b64 = "${file("id_rsa_port.b64")}"
-        bootport_public_key_b64 = "${file("id_rsa_port.pub.b64")}"
+        worker_bootk8s_key = "${file("pki/id_rsa_worker.pub")}"
+        bootport_private_key_b64 = "${base64encode(file("pki/id_rsa_port"))}"
+        bootport_public_key_b64 = "${base64encode(file("pki/id_rsa_port.pub"))}"
     }
 }
+
 data "template_file" "finish_bootstrap" {
-    template = "${file("bootstrap-finish.sh")}"
+    template = "${file("scripts/bootstrap-finish.sh")}"
     vars {
         domain_name = "${var.domain_name}"
         letsencrypt_email = "${var.letsencrypt_email}"
@@ -22,7 +23,7 @@ data "template_cloudinit_config" "master_cloud_init" {
     }
     part {
         content_type = "text/x-shellscript"
-        content = "${file("bootstrap-master.sh")}"
+        content = "${file("scripts/bootstrap-master.sh")}"
     }
     part {
         content_type = "text/x-shellscript"
