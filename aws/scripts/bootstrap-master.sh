@@ -1,29 +1,10 @@
 #!/bin/bash
 
-KUBERNETES_VERSION=1.17.0-00
-DOCKER_VERSION=5:18.09.9~3-0~debian-buster
-CNI_VERSION=0.7.5-00
 CALICO_VERSION=v3.11
 POD_CIDR=10.80.0.0/14
 SERVICE_CIDR=10.96.0.0/14
 
 apt-get update
-apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common
-
-# Add kubernetes and docker apt repo
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
-deb http://apt.kubernetes.io/ kubernetes-xenial main
-EOF
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-
-# Install docker and kubernetes
-apt-get update
-apt-get install -y docker-ce=$DOCKER_VERSION
-apt-get install -y kubelet=$KUBERNETES_VERSION kubeadm=$KUBERNETES_VERSION kubectl=$KUBERNETES_VERSION kubernetes-cni=$CNI_VERSION
-
-systemctl enable docker
 
 IP_ADDR=$(ip addr | grep inet | grep eth0 | awk '{ print $2 }' | awk -F '/' '{ print $1 }')
 pushd /home/admin
