@@ -4,13 +4,26 @@ CALICO_VERSION=v3.11
 POD_CIDR=10.80.0.0/14
 SERVICE_CIDR=10.96.0.0/14
 
-apt-get update
-
-IP_ADDR=$(ip addr | grep inet | grep eth0 | awk '{ print $2 }' | awk -F '/' '{ print $1 }')
 pushd /home/admin
 
+KUBERNETES_VERSION=$(dpkg -l | grep kubelet | awk '{print $3}' | awk -F - '{print $1}')
+
+cat <<EOF | tee kubeadm-init-config.yaml
+kind: ClusterConfiguration
+apiVersion: kubeadm.k8s.io/v1beta2
+kubernetesVersion: $KUBERNETES_VERSION
+networking:
+  serviceSubnet: $SERVICE_CIDR
+  podSubnet: $POD_CIDR
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+EOF
+
+
 # Initialize kubernetes control plane
-kubeadm init --apiserver-advertise-address=$IP_ADDR --service-cidr=$SERVICE_CIDR --pod-network-cidr=$POD_CIDR 2>&1 | tee kubeinit.log
+kubeadm init --config kubeadm-init-config.yaml 2>&1 | tee kubeinit.log
 
 # Copy kubernetes configuration file
 mkdir -p .kube

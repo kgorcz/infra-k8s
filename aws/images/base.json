@@ -10,9 +10,9 @@
             "secret_key": "{{ user `aws_secret_key` }}",
             "region": "us-east-2",
             "source_ami": "ami-00e5800cc210e31d7",
-            "instance_type": "t2.micro",
+            "instance_type": "t3a.micro",
             "ssh_username": "admin",
-            "ami_name": "k8s 1.17"
+            "ami_name": "k8s 1.18"
         }
     ],
     "provisioners": [

@@ -7,6 +7,8 @@ work_dir="/home/admin"
 
 pushd $work_dir
 
+apt-get install -y git
+
 cat <<EOF > install-addons.sh
 #!/bin/bash
 
@@ -32,6 +34,8 @@ do
     ./\$i $kubecfg 2>&1 | tee \$addon_name.log
     popd
 done
+
+apt-get remove -y git
 
 EOF
 

@@ -2,8 +2,6 @@
 
 BOOTK8S_KEY=/etc/ssh/id_rsa_bootk8s
 
-apt-get update
-
 # Add master to list of authorized_keys
 scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $BOOTK8S_KEY bootk8s@${master_ip}:/home/bootk8s/ssh_host_rsa_key.pub ./master_rsa.pub
 while [ $? -ne 0 ]
