@@ -43,18 +43,17 @@ EOF
 
 kubectl $kubecfg apply -f kibana.yaml
 
-# v1.4.2-debian-elasticsearch-1.0
-
 git clone https://github.com/fluent/fluentd-kubernetes-daemonset
 cd fluentd-kubernetes-daemonset/
-git checkout -b v14 4210ab61f4af6555edd1334e49425b575f4bfbab
-sed "s|extensions/v1beta1|apps/v1|" -i fluentd-daemonset-elasticsearch-rbac.yaml
-sed "s|template|selector:\n    matchLabels:\n      k8s-app: fluentd-logging\n  template|" -i fluentd-daemonset-elasticsearch-rbac.yaml
-sed "s|fluentd-kubernetes-daemonset:elasticsearch|fluentd-kubernetes-daemonset:v1.4.2-debian-elasticsearch-1.0|" -i fluentd-daemonset-elasticsearch-rbac.yaml
+git checkout -b v1 af32a7336e99df5188ac79541074b8ba357025c5
+sed "s|fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch|fluent/fluentd-kubernetes-daemonset:v1.12-debian-elasticsearch7-1|" -i fluentd-daemonset-elasticsearch-rbac.yaml
 sed "s|elasticsearch-logging|elasticsearch-logging-es.default|" -i fluentd-daemonset-elasticsearch-rbac.yaml
-sed "s|http|https|" -i fluentd-daemonset-elasticsearch-rbac.yaml
-sed "s|changeme\"|$PASSWORD\"\n          - name: FLUENT_ELASTICSEARCH_SSL_VERIFY\n            value: \"false\"\n          - name: FLUENT_ELASTICSEARCH_SSL_VERSION\n            value: \"TLSv1_2\"|" -i fluentd-daemonset-elasticsearch-rbac.yaml
+sed "s|changeme|$PASSWORD|" -i fluentd-daemonset-elasticsearch-rbac.yaml
+sed "/.*ELASTICSEARCH_SCHEME/ { n; s/http/https/ }" -i fluentd-daemonset-elasticsearch-rbac.yaml
+sed "/.*SSL_VERIFY/ { n; s/true/false/ }" -i fluentd-daemonset-elasticsearch-rbac.yaml
 
 kubectl $kubecfg apply -f fluentd-daemonset-elasticsearch-rbac.yaml
 
-# kc get secret elasticsearch-logging-elastic-user -o yaml | grep elastic: | awk '{print $2}' | base64 -d
+# kc get secret elasticsearch-logging-elastic-user -o yaml | grep -C 1 ^data: | grep elastic | awk '{print $2}' | base64 -d
+# kc port-forward svc/elasticsearch-logging-kibana --address 0.0.0.0 5601:5601
+# https://github.com/fluent/fluentd-kubernetes-daemonset/issues/434#issuecomment-831801690
