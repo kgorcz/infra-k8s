@@ -6,7 +6,7 @@ kubectl $kubecfg apply -f cert-manager.yaml
 
 cat <<EOF > letsencrypt-staging.yaml
 apiVersion: cert-manager.io/v1alpha2
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: letsencrypt-staging
 spec:
@@ -35,7 +35,7 @@ done
 
 cat <<EOF > letsencrypt-prod.yaml
 apiVersion: cert-manager.io/v1alpha2
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
 spec:

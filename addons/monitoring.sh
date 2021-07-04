@@ -3,7 +3,7 @@ kubecfg="--kubeconfig $1"
 
 git clone https://github.com/coreos/kube-prometheus
 pushd kube-prometheus
-git checkout -b v03 v0.3.0
+git checkout -b v07 v0.7.0
 kubectl $kubecfg create -f manifests/setup
 until kubectl $kubecfg get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; done
 kubectl $kubecfg create -f manifests/
