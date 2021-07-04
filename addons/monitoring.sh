@@ -19,7 +19,7 @@ metadata:
     app: grafana
   annotations:
     kubernetes.io/ingress.class: contour
-    cert-manager.io/issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-staging
     ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   tls:

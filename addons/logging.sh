@@ -56,6 +56,34 @@ sed "/.*ELASTICSEARCH_SCHEME/ i \          - name: FLUENT_CONTAINER_TAIL_EXCLUDE
 
 kubectl $kubecfg apply -f fluentd-daemonset-elasticsearch-rbac.yaml
 
+cat <<EOF > kibana-ingress.yaml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+  annotations:
+    kubernetes.io/ingress.class: contour
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  tls:
+  - secretName: kibana
+    hosts:
+    - logs.${DOMAIN}
+  rules:
+  - host: logs.${DOMAIN}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: elasticsearch-logging-kibana
+          servicePort: 5601
+EOF
+
+kubectl $kubecfg apply -f kibana-ingress.yaml
+
 # kc get secret elasticsearch-logging-elastic-user -o yaml | grep -C 1 ^data: | grep elastic | awk '{print $2}' | base64 -d
 # kc port-forward svc/elasticsearch-logging-kibana --address 0.0.0.0 5601:5601
 # https://github.com/fluent/fluentd-kubernetes-daemonset/issues/434#issuecomment-831801690

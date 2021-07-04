@@ -36,7 +36,7 @@ metadata:
    app: dicom-cert
  annotations:
    kubernetes.io/ingress.class: contour
-   cert-manager.io/issuer: letsencrypt-staging
+   cert-manager.io/cluster-issuer: letsencrypt-staging
    ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
  tls:
@@ -193,7 +193,7 @@ metadata:
     app: web-api
   annotations:
     kubernetes.io/ingress.class: contour
-    cert-manager.io/issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-staging
     ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   tls:
@@ -259,7 +259,7 @@ metadata:
     app: www
   annotations:
     kubernetes.io/ingress.class: contour
-    cert-manager.io/issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-staging
     ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   tls:
