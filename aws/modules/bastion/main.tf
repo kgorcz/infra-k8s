@@ -18,7 +18,7 @@ data "template_cloudinit_config" "bastion_cloud_init" {
 }
 
 resource "aws_instance" "bastion" {
-    ami = "ami-00e5800cc210e31d7"
+    ami = "ami-07b77860a9b5d26c0"
     instance_type = "t3a.micro"
     subnet_id = "${var.public_subnet_id}"
     vpc_security_group_ids = ["${aws_security_group.asg_public.id}"]

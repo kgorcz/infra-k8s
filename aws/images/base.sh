@@ -1,7 +1,7 @@
 #!/bin/bash
 
-KUBERNETES_VERSION=1.18.19-00
-CONTAINERD_VERSION=1.4.6-1
+KUBERNETES_VERSION=1.20.15-00
+CONTAINERD_VERSION=1.4.13~ds1-1~deb11u2
 CNI_VERSION=0.8.7-00
 
 sleep 30
@@ -9,12 +9,9 @@ sleep 30
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common htop
 
-# Add kubernetes and docker apt repo
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-sudo add-apt-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+# Add kubernetes apt repo
+sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
 cat <<EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
@@ -36,7 +33,7 @@ sudo sysctl --system
 
 # Install containerd
 sudo apt-get update
-sudo apt-get install -y containerd.io=$CONTAINERD_VERSION cri-tools
+sudo apt-get install -y containerd=$CONTAINERD_VERSION cri-tools
 
 sudo mkdir -p /etc/containerd
 containerd config default | sudo tee /etc/containerd/config.toml
