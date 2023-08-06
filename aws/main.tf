@@ -1,11 +1,20 @@
-provider "aws" {
-    region = "us-east-2"
-    version = "~> 1.0"
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+    cloudinit = {
+      source = "hashicorp/cloudinit"
+      version = "~> 2.0"
+    }
+  }
 }
 
-provider "template" {
-    version = "~> 1.0"
+provider "aws" {
+    region = "us-east-2"
 }
+
 
 resource "aws_key_pair" "client" {
     key_name = "ter-key"
@@ -37,7 +46,7 @@ module "kubernetes_cluster_a" {
   worker_count = "${var.worker_count}"
   vpc_id = "${module.vpc.vpc_id}"
   root_domain = "${var.root_domain}"
-  domain_name = "${join(".", list(var.cluster_names[0], var.root_domain))}"
+  domain_name = "${join(".", tolist([var.cluster_names[0], var.root_domain]))}"
   letsencrypt_email = "${var.letsencrypt_email}"
 }
 

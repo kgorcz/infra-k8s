@@ -1,15 +1,10 @@
 
-data "template_file" "bastion_cloud_config" {
-    template = "${file("${path.module}/bastion.yml")}"
-    vars {
-        bootport_key = "${file("pki/id_rsa_port.pub")}"
-    }
-}
-
-data "template_cloudinit_config" "bastion_cloud_init" {
+data "cloudinit_config" "bastion_cloud_init" {
     part {
         content_type = "text/cloud-config"
-        content = "${data.template_file.bastion_cloud_config.rendered}"
+        content = templatefile("${path.module}/bastion.yml", {
+            bootport_key = "${file("pki/id_rsa_port.pub")}"
+        })
     }
     part {
         content_type = "text/x-shellscript"
@@ -18,15 +13,15 @@ data "template_cloudinit_config" "bastion_cloud_init" {
 }
 
 resource "aws_instance" "bastion" {
-    ami = "ami-07b77860a9b5d26c0"
+    ami = "ami-05bad978b2cf5d78c"
     instance_type = "t3a.micro"
     subnet_id = "${var.public_subnet_id}"
     vpc_security_group_ids = ["${aws_security_group.asg_public.id}"]
     key_name = "${var.key_name}"
 
-    user_data = "${data.template_cloudinit_config.bastion_cloud_init.rendered}"
+    user_data = "${data.cloudinit_config.bastion_cloud_init.rendered}"
 
-    tags {
+    tags = {
         Name = "bastion"
     }
 }

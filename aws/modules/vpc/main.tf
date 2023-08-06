@@ -8,14 +8,14 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_eip" "nat" {
-  vpc = true
-  depends_on = ["aws_internet_gateway.igw"]
+  domain = "vpc"
+  depends_on = [aws_internet_gateway.igw]
 }
 
 resource "aws_nat_gateway" "ngw" {
   allocation_id = "${aws_eip.nat.id}"
   subnet_id     = "${aws_subnet.public_subnet.id}"
-  depends_on = ["aws_eip.nat"]
+  depends_on = [aws_eip.nat]
 }
 
 resource "aws_subnet" "public_subnet" {
@@ -60,12 +60,12 @@ resource "aws_route_table_association" "private" {
 }
 
 output "public_subnet_id" {
-  depends_on = ["aws_route_table_association.public"]
+  depends_on = [aws_route_table_association.public]
   value = "${aws_subnet.public_subnet.id}"
 }
 
 output "private_subnet_id" {
-  depends_on = ["aws_route_table_association.private"]
+  depends_on = [aws_route_table_association.private]
   value = "${aws_subnet.private_subnet.id}"
 }
 
